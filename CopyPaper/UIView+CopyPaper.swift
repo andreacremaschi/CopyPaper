@@ -8,7 +8,6 @@ extension UIView {
     @IBInspectable
     public var passThrough: Bool {
         get {
-            print ("\(String(self.dynamicType))")
             if (String(self.dynamicType) == "UIViewControllerWrapperView" ||
                 String(self.dynamicType) == "UINavigationTransitionView") { return true }
             return objc_getAssociatedObject(self, &isTransparentAssociationKey) as? Bool ?? false
