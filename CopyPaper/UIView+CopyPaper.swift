@@ -8,6 +8,9 @@ extension UIView {
     @IBInspectable
     public var passThrough: Bool {
         get {
+            print ("\(String(self.dynamicType))")
+            if (String(self.dynamicType) == "UIViewControllerWrapperView" ||
+                String(self.dynamicType) == "UINavigationTransitionView") { return true }
             return objc_getAssociatedObject(self, &isTransparentAssociationKey) as? Bool ?? false
         }
         set(newValue) {
@@ -20,23 +23,34 @@ extension UIView {
         swizzleMethodSelector("hitTest:withEvent:", withSelector: "cp_hitTest:withEvent:", forClass: UIView.self)
     }
 
-    private func cp_hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-//        print("\(self)")
+    public func cp_hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
 
-        let hitView = self.cp_hitTest(point, withEvent: event)
-        if hitView?.passThrough ?? false {
+        guard let hitView = self.cp_hitTest(point, withEvent: event) else { return nil }
+
+        // If the gesture shouldn't pass through, return the hit view
+        guard hitView.passThrough else { return hitView }
+
+        // If the gesture should pass through but there is no super view, return nil
+        guard let underneathSiblingView = self.underneathSiblingView() else {
+
+            // If the gesture should pass through but there are no siblings views underneath
+            // hit test the underneath sibling view of the superview
             guard let superview = self.superview else { return nil }
-            guard let selfIndex = superview.subviews.indexOf(self) else { return nil }
-            if (selfIndex > 0) {
-                for i in (0...selfIndex-1).reverse() {
-                    let nextViewInStack = superview.subviews[i];
-                    let pointInView = nextViewInStack.convertPoint(point, fromView: self)
-                    if let view = nextViewInStack.hitTest(pointInView, withEvent:event) {
-                        return view
-                    }
-                }
-            }
+            guard superview.passThrough else { return superview }
+            guard let superUnderneathSiblingView = superview.underneathSiblingView() else { return nil }
+            let pointInView = superUnderneathSiblingView.convertPoint(point, fromView: self)
+            return superUnderneathSiblingView.hitTest(pointInView, withEvent: event)
         }
-        return hitView
+        
+        // Test the underneath sibling for hit
+        let pointInView = underneathSiblingView.convertPoint(point, fromView: self)
+        return underneathSiblingView.hitTest(pointInView, withEvent:event)
+    }
+    
+    private func underneathSiblingView() -> UIView? {
+        guard let superview = self.superview else { return nil }
+        let selfIndex = superview.subviews.indexOf(self)!
+        guard selfIndex > 0 else { return nil }
+        return superview.subviews[selfIndex - 1]
     }
 }
