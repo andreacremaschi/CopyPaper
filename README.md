@@ -10,7 +10,7 @@ _Let gestures pass through views, so that you can overlay view controllers_
 `CopyPaper` is a twist over the standard `UIKit` behavior. 
 Let's say we want to build an app that keeps a map or a collection view (A) in the background and a navigation controller (B) over it, like in the following example:
 
-![Example](https://raw.githubusercontent.com/andreacremaschi/CopyPaper/Documentation-artwork/rotate.png)
+![Example](Documentation-artwork/rotate.png)
 
 
 `UIKit` wouldn't allow you to have gestures be transmitted through the views' hierarchy to the one underneath, i.e. to pan the map or to tap on items on the collection's view. `CopyPaper` lets you just do that.
