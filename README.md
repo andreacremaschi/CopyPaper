@@ -61,12 +61,6 @@ it, simply add the following line to your Podfile:
 pod 'CopyPaper', '~> 0.1.0'
 ```
 
-CopyPaper also is available using [Carthage](https://github.com/Carthage/Carthage). To install it add the following dependency to your `Cartfile`:
-
-```
-github "andreacremaschi/CopyPaper" ~> 0.1.0
-```
-
 Author
 ======
 **Andrea Cremaschi**
