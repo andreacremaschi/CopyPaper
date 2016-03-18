@@ -13,7 +13,7 @@ Let's say we want to build an app that keeps a map or a collection view (A) in t
 ![Example](Documentation-artwork/rotate.png)
 
 
-`UIKit` wouldn't allow you to have gestures be transmitted through the views' hierarchy to the one underneath, i.e. to pan the map or to tap on items on the collection's view. `CopyPaper` lets you just do that.
+`UIKit` wouldn't allow you to have gestures be transmitted through the views' hierarchy to the one underneath, i.e. to pan the map or to tap on items on the collection view. `CopyPaper` lets you just do that.
 
 Usage
 ============
