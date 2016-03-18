@@ -38,7 +38,7 @@ This is the property added to `UIViewController`s, to be set before it is loaded
     @IBInspectable public var overlay: Bool 
 ```
 
-# Isn't `userInteractionEnabled` enough for that?
+### Isn't `userInteractionEnabled` enough for that?
 
 No. This is what Apple Documentation says about UIView's `userInteractionEnabled` property:
 
