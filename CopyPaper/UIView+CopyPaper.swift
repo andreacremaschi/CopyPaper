@@ -8,9 +8,17 @@ extension UIView {
     @IBInspectable
     public var passThrough: Bool {
         get {
-            if (String(self.dynamicType) == "UIViewControllerWrapperView" ||
-                String(self.dynamicType) == "UINavigationTransitionView") { return true }
-            return objc_getAssociatedObject(self, &isTransparentAssociationKey) as? Bool ?? false
+            if let value = objc_getAssociatedObject(self, &isTransparentAssociationKey) as? Bool {
+                return value
+            } else {
+                // Default value for UIKit private container views
+                let viewClassName = String(self.dynamicType)
+                let passThrough = ["UIViewControllerWrapperView",
+                    "UINavigationTransitionView",
+                    "UILayoutContainerView"].contains(viewClassName)
+                self.passThrough = passThrough
+                return passThrough
+            }
         }
         set(newValue) {
             objc_setAssociatedObject(self, &isTransparentAssociationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -21,14 +29,14 @@ extension UIView {
         guard self === UIView.self else { return }
         swizzleMethodSelector("hitTest:withEvent:", withSelector: "cp_hitTest:withEvent:", forClass: UIView.self)
     }
-
+    
     public func cp_hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
         guard let hitView = self.cp_hitTest(point, withEvent: event) else { return nil }
         return hitView.cp_passThroughTest(point, withEvent: event)
     }
     
     private func cp_passThroughTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-
+        
         // If the gesture shouldn't pass through, return self
         guard self.passThrough else { return self }
         
